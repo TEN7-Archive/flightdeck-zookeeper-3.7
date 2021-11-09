@@ -1,0 +1,42 @@
+# The number of milliseconds of each tick
+tickTime={{ flightdeck_zookeeper.tickTime | default(flightdeck_zookeeper_defaults.tickTime )}}
+# The number of ticks that the initial
+# synchronization phase can take
+initLimit={{ flightdeck_zookeeper.initLimit | default(flightdeck_zookeeper_defaults.initLimit )}}
+# The number of ticks that can pass between
+# sending a request and getting an acknowledgement
+syncLimit={{ flightdeck_zookeeper.syncLimit | default(flightdeck_zookeeper_defaults.syncLimit )}}
+# the directory where the snapshot is stored.
+# do not use /tmp for storage, /tmp here is just
+# example sakes.
+dataDir={{ flightdeck_zookeeper.dataDir | default(flightdeck_zookeeper_defaults.dataDir )}}
+# the port at which the clients will connect
+{% if flightdeck_zookeeper.servers | length == 0 %}
+clientPort={{ flightdeck_zookeeper.clientPort | default(flightdeck_zookeeper_defaults.clientPort )}}
+{% endif %}
+# the maximum number of client connections.
+# increase this if you need to handle more clients
+{% if flightdeck_zookeeper.maxClientCnxns is defined %}
+maxClientCnxns={{ flightdeck_zookeeper.maxClientCnxns }}
+{% endif %}
+#
+# Be sure to read the maintenance section of the
+# administrator guide before turning on autopurge.
+#
+# http://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_maintenance
+#
+# The number of snapshots to retain in dataDir
+{% if flightdeck_zookeeper.autopurge.state | default(flightdeck_zookeeper_defaults.autopurge.state) == true %}
+autopurge.snapRetainCount={{ flightdeck_zookeeper.autopurge.snapRetainCount | default(flightdeck_zookeeper_defaults.autopurge.snapRetainCount) }}
+{% endif %}
+# Purge task interval in hours
+# Set to "0" to disable auto purge feature
+{% if flightdeck_zookeeper.autopurge.state | default(flightdeck_zookeeper_defaults.autopurge.state) == true %}
+autopurge.purgeInterval={{ flightdeck_zookeeper.autopurge.purgeInterval | default(flightdeck_zookeeper_defaults.autopurge.purgeInterval) }}
+{% endif %}
+
+{% for _server in flightdeck_zookeeper.servers | default(flightdeck_zookeeper_defaults.servers) %}
+server.{{ loop.index }}={{ _server.host }}:{{ _server.quorumPort | default('2888') }}:{{ _server.leaderPort | default("3888") }}:participant;0.0.0.0:{{ flightdeck_zookeeper.clientPort | default(flightdeck_zookeeper_defaults.clientPort )}}
+{% endfor %}
+
+4lw.commands.whitelist=mntr,conf,ruok

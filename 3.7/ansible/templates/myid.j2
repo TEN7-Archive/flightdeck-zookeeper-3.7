@@ -1,0 +1,5 @@
+{% if (flightdeck_zookeeper.myId is defined) %}
+{{ flightdeck_zookeeper.myId }}
+{% elif (flightdeck_zookeeper.myIdFromHostname | default(flightdeck_zookeeper_defaults.myIdFromHostname)) %}
+{{ ((lookup('env', 'HOSTNAME') | regex_findall('\-[0-9]+')) | default(['-0'], true) | last | regex_replace('\-+', '') | int) + 1 }}
+{% endif %}

@@ -1,0 +1,8 @@
+#!/bin/bash
+set -me
+
+SCRIPT_NAME=`basename "$0"`
+
+echo "$SCRIPT_NAME: Starting zookeeper in the foreground..."
+
+/opt/zookeeper/bin/zkServer.sh  --config /opt/zookeeper/conf start-foreground

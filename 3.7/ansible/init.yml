@@ -1,0 +1,17 @@
+---
+- hosts: zookeeper
+  tasks:
+    - name: Deploy key scripts.
+      template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: "zookeeper"
+        group: "zookeeper"
+        mode: "u=rwx,g=rwx,o="
+      loop:
+        - src: "templates/zookeeper-foreground.sh.j2"
+          dest: "/opt/zookeeper/bin/zookeeper-foreground.sh"
+        - src: "templates/zoo.cfg.j2"
+          dest: "/opt/zookeeper/conf/zoo.cfg"
+        - src: "templates/myid.j2"
+          dest: "{{ flightdeck_zookeeper.dataDir | default(flightdeck_zookeeper_defaults.dataDir) }}/myid"
